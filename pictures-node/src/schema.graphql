@@ -1,0 +1,10 @@
+# import Post from "./generated/prisma.graphql"
+
+type Query {
+  feed(filter: String, skip: Int, first: Int): [Picture!]!
+}
+
+type Feed {
+  pictures: [Picture!]!
+  count: Int!
+}

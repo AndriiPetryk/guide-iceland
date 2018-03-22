@@ -1,0 +1,6 @@
+type Picture {
+  id: ID! @unique
+  uniq: String!
+  link: String!
+  pic: String!
+}
