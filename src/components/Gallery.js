@@ -5,6 +5,7 @@ import { Button, ButtonGroup } from 'reactstrap';
 import PicItem from './PicItem';
 import PreviewModal from './PreviewModal';
 
+
 class Gallery extends Component {
     constructor(props){
         super(props);
