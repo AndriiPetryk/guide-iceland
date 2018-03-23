@@ -1,7 +1,6 @@
-## Table of Contents
-In guide-iceland:
+#In guide-iceland:
   1. yarn install
   2. yarn start
-In pictures-node:
+#In pictures-node:
   1. yarn install
   2. yarn start
