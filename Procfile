@@ -1,0 +1,1 @@
+web: node pictures-node/src/index.js
