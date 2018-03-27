@@ -5,6 +5,7 @@
 .idea
 # testing
 /coverage
+.history
 
 pictures-node/node_modules
 

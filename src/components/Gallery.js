@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import { withApollo } from 'react-apollo';
-import gql from 'graphql-tag';
-import { Button, ButtonGroup } from 'reactstrap';
+import FEED_SEARCH_QUERY from './graphQlQuery';
 import PicItem from './PicItem';
 import PreviewModal from './PreviewModal';
+import BurgerMenu from './Menu';
 
 
 class Gallery extends Component {
     constructor(props){
         super(props);
         this.state = {
+            paginator: 1,
+            itemsPerPage: 6,
             pictures: [],
             modalIsOpen: false,
             selectedPic: { pic: '', link: '' },
@@ -24,6 +26,13 @@ class Gallery extends Component {
         const {btnPop} = this.state;
         setTimeout(()=>this._executeSearch(btnPop), 2000);
     }
+
+    loadMore(e) {
+        e.preventDefault();
+        const { paginator } = this.state;
+        this.setState({ paginator: paginator + 1 })
+    }
+
     openPreview(e, pic, link) {
         e.preventDefault();
 
@@ -41,34 +50,35 @@ class Gallery extends Component {
     }
 
     render() {
-        const {btnPop, btnVer, btnLat, btnNew, modalIsOpen, selectedPic} = this.state;
+        const {paginator, pictures, itemsPerPage, btnPop, btnVer, btnLat, btnNew, modalIsOpen, selectedPic} = this.state;
         return (
-            <div style={{paddingTop: 50 + "px"}}>
-                <div className="text-center" style={{width: 100 + "%"}}>
-                    <ButtonGroup size="sm">
-                        <Button
-                            onClick={() => this._executeSearch(btnPop)}>
-                            Popular tips
-                        </Button>
-                        <Button
-                            onClick={() => this._executeSearch(btnVer)}>
-                            Verified locals
-                        </Button>
-                        <Button
-                            onClick={() => this._executeSearch(btnLat)}>
-                            Latest tips
-                        </Button>
-                        <Button
-                            onClick={() => this._executeSearch(btnNew)}>
-                            Newest locals
-                        </Button>
-                    </ButtonGroup>
-
+            <div className="photobuddy_fl_blog">
+                <div className="photobuddy_fl_blog_bg">
+                    <div className="title_holder">
+                        <h2>Photography And Travel</h2>
+                        <span>We will Publish photography related posts here</span>
+                    </div>
                 </div>
-                <div className="container">
-                    {this.state.pictures.map((item, index) => {
-                        return <PicItem key={index} {...item} openModal={this.openPreview.bind(this)}/>
-                    })}
+                <BurgerMenu/>
+                <div className="container photobuddy_fl_gallery_list_in">
+                    <div style={{width: 100 + "%", marginBottom: 50}}>
+                        <div class="title_holder">
+                            <h2>
+                                <span>Photography Emotion</span>
+                            </h2>
+                            <span class="category">
+                                <span href="#" onClick={() => this._executeSearch(btnPop)}>Popular tips</span> / <span onClick={() => this._executeSearch(btnVer)} href="#">Verified locals</span> / <span onClick={() => this._executeSearch(btnLat)} href="#">Latest tips</span> / <span onClick={() => this._executeSearch(btnNew)} href="#"> Newest local</span>
+                            </span>
+                        </div>
+                    </div>
+                        {pictures.slice(0, paginator * itemsPerPage).map((item, index) => {
+                            return <PicItem key={index} {...item} openModal={this.openPreview.bind(this)}/>
+                        })}
+                        {paginator * itemsPerPage < pictures.length
+                            ?<span onClick={this.loadMore.bind(this)} className="see_more"><a href="#">See More</a></span>
+                            : null
+
+                        }
                 </div>
 
                 <PreviewModal isOpen={modalIsOpen} selectedPic={selectedPic}
@@ -84,19 +94,11 @@ class Gallery extends Component {
             variables: { filter },
         });
         const pictures = result.data.feed;
-        this.setState({ pictures })
+        const paginator = 1;
+        this.setState({ pictures, paginator })
     }
 
 }
-const FEED_SEARCH_QUERY = gql`
-    query FeedSearchQuery($filter: String!) {
-        feed(filter: $filter) {
-            id
-            link
-            uniq
-            pic
-        }
-    }
-`
+
 
 export default withApollo(Gallery)
